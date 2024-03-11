@@ -1,0 +1,1 @@
+Python Flask para registrar asistencia en Odoo.
