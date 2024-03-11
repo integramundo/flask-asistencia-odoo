@@ -1,5 +1,6 @@
 from flask import Flask, request
-from odoo_attendance import get_attendance
+from odoo_post_attendance import get_attendance
+from odoo_get_attendance import post_attendance
 
 app = Flask(__name__)
 
@@ -13,7 +14,27 @@ def get_attendance_route():
     username = request.args.get('username')
     verbose = request.args.get('verbose', False)
 
+    if verbose.lower() in ['true', '1']:
+        verbose = True
+    else:
+        verbose = False
+
     result = get_attendance(file_path, username, verbose)
+    return result
+
+@app.route('/post_attendance', methods=['GET'])
+def post_attendance_route():
+    file_path = request.args.get('file_path')
+    action = request.args.get('action')
+    username = request.args.get('username')
+    verbose = request.args.get('verbose', False)
+
+    if verbose.lower() in ['true', '1']:
+        verbose = True
+    else:
+        verbose = False
+
+    result = post_attendance(file_path, action, username, verbose)
     return result
 
 if __name__ == '__main__':
