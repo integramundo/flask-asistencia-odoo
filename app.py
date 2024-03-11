@@ -1,6 +1,6 @@
 from flask import Flask, request
-from odoo_post_attendance import get_attendance
-from odoo_get_attendance import post_attendance
+from odoo_post_attendance import post_attendance
+from odoo_get_attendance import get_attendance
 
 app = Flask(__name__)
 
