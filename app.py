@@ -4,17 +4,19 @@ from odoo_get_attendance import get_attendance
 
 app = Flask(__name__)
 
-@app.route('/hello/<name>', methods=['GET'])
+
+@app.route("/hello/<name>", methods=["GET"])
 def hello_name(name):
-    return f'Hello {name}'
+    return f"Hello {name}"
 
-@app.route('/get_attendance', methods=['GET'])
+
+@app.route("/get_attendance", methods=["GET"])
 def get_attendance_route():
-    file_path = request.args.get('file_path')
-    username = request.args.get('username')
-    verbose = request.args.get('verbose', False)
+    file_path = request.args.get("file_path")
+    username = request.args.get("username")
+    verbose = request.args.get("verbose")
 
-    if verbose.lower() in ['true', '1']:
+    if verbose and verbose.lower() in ["true", "1"]:
         verbose = True
     else:
         verbose = False
@@ -22,14 +24,15 @@ def get_attendance_route():
     result = get_attendance(file_path, username, verbose)
     return result
 
-@app.route('/post_attendance', methods=['GET'])
-def post_attendance_route():
-    file_path = request.args.get('file_path')
-    action = request.args.get('action')
-    username = request.args.get('username')
-    verbose = request.args.get('verbose', False)
 
-    if verbose.lower() in ['true', '1']:
+@app.route("/post_attendance", methods=["GET"])
+def post_attendance_route():
+    file_path = request.args.get("file_path")
+    action = request.args.get("action")
+    username = request.args.get("username")
+    verbose = request.args.get("verbose")
+
+    if verbose and verbose.lower() in ["true", "1"]:
         verbose = True
     else:
         verbose = False
@@ -37,5 +40,6 @@ def post_attendance_route():
     result = post_attendance(file_path, action, username, verbose)
     return result
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     app.run(debug=True)
