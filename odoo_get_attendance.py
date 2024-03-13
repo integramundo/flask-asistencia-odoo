@@ -3,16 +3,29 @@ import re
 
 
 # Function to read Odoo information from a file
-def read_odoo_info(file_path):
+def read_odoo_info(file_path, verbose):
     odoo_info = {}
     with open(file_path, "r") as file:
         for line in file:
             line = line.strip()
+            if verbose == True:
+                print("Processing line:", line)
             pairs = re.findall(r"([^=]+)\s*=\s*(.*)", line)
             for key, value in pairs:
                 odoo_info[key.strip()] = value.strip().strip(
                     "'"
                 )  # Remove leading/trailing single quotes
+                if verbose == True:
+                    print(
+                        "Matched key-value pair:",
+                        key.strip(),
+                        ":",
+                        value.strip().strip("'"),
+                    )
+    if verbose == True:
+        print("Key-value pairs read from file:")
+        for key, value in odoo_info.items():
+            print(key + ":", value)
     return (
         odoo_info.get("url"),
         odoo_info.get("db"),
@@ -24,7 +37,7 @@ def read_odoo_info(file_path):
 def get_attendance(file_path, username, verbose):
     # Read Odoo information from the file
     try:
-        url, db, db_username, password = read_odoo_info(file_path)
+        url, db, db_username, password = read_odoo_info(file_path, verbose)
     except FileNotFoundError:
         return "File not found: " + file_path, 404
 
