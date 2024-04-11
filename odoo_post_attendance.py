@@ -60,22 +60,43 @@ def post_attendance(file_path, action, username, verbose):
 
         if employee_id:
             if action == "check-in":
-                result = models.execute_kw(
+                # Check for existing active attendance record
+                attendance_id = models.execute_kw(
                     db,
                     uid,
                     password,
                     "hr.attendance",
-                    "create",
-                    [
-                        {
-                            "employee_id": employee_id[0],
-                            "check_in": datetime.now(timezone.utc).strftime(
-                                "%Y-%m-%d %H:%M:%S"
-                            ),
-                        }
-                    ],
+                    "search",
+                    [[["employee_id", "=", employee_id[0]], ["check_out", "=", False]]],
+                    {"limit": 1},
                 )
-                return "Check-in successful."
+                if attendance_id:
+                    # Employee already has an active check-in session
+                    return (
+                        "Error: Cannot clock in. {} already has an active check-in session.".format(
+                            username
+                        ),
+                        400,  # Bad request (already clocked in)
+                    )
+                else:
+                    # No active check-in found, proceed with clock-in
+                    result = models.execute_kw(
+                        db,
+                        uid,
+                        password,
+                        "hr.attendance",
+                        "create",
+                        [
+                            {
+                                "employee_id": employee_id[0],
+                                "check_in": datetime.now(timezone.utc).strftime(
+                                    "%Y-%m-%d %H:%M:%S"
+                                ),
+                            }
+                        ],
+                    )
+                    return "Check-in successful."
+
             elif action == "check-out":
                 attendance_id = models.execute_kw(
                     db,
