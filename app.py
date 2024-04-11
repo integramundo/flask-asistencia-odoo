@@ -31,7 +31,7 @@ def get_attendance_route():
     # Map username to real name if it exists
     real_name = user_map.get(username)
     if not real_name:
-        return f"Error: Username '{username}' not found in mapping."
+        return f"Error: Username '{username}' not found in mapping.", 404
 
     result = get_attendance(file_path, real_name, verbose)
     return result
@@ -52,7 +52,7 @@ def post_attendance_route():
     # Map username to real name if it exists
     real_name = user_map.get(username)
     if not real_name:
-        return f"Error: Username '{username}' not found in mapping."
+        return f"Error: Username '{username}' not found in mapping.", 404
 
     result = post_attendance(file_path, action, real_name, verbose)
     return result
