@@ -2,6 +2,13 @@ from flask import Flask, request
 from odoo_post_attendance import post_attendance
 from odoo_get_attendance import get_attendance
 
+# Hypothetical dictionary mapping usernames to real names
+user_map = {
+    "User 1": "Cristopher Ferrada",
+    "User 2": "Sarah Jones",
+    # Add more mappings here as needed
+}
+
 app = Flask(__name__)
 
 
@@ -21,7 +28,12 @@ def get_attendance_route():
     else:
         verbose = False
 
-    result = get_attendance(file_path, username, verbose)
+    # Map username to real name if it exists
+    real_name = user_map.get(username)
+    if not real_name:
+        return f"Error: Username '{username}' not found in mapping."
+
+    result = get_attendance(file_path, real_name, verbose)
     return result
 
 
@@ -37,7 +49,12 @@ def post_attendance_route():
     else:
         verbose = False
 
-    result = post_attendance(file_path, action, username, verbose)
+    # Map username to real name if it exists
+    real_name = user_map.get(username)
+    if not real_name:
+        return f"Error: Username '{username}' not found in mapping."
+
+    result = post_attendance(file_path, action, real_name, verbose)
     return result
 
 
