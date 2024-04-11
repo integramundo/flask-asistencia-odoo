@@ -98,6 +98,7 @@ def post_attendance(file_path, action, username, verbose):
                     return "Check-in successful."
 
             elif action == "check-out":
+                # Check for existing attendance record with no check-out
                 attendance_id = models.execute_kw(
                     db,
                     uid,
@@ -125,7 +126,13 @@ def post_attendance(file_path, action, username, verbose):
                     )
                     return "Check-out successful."
                 else:
-                    return "No active check-in found for {}.".format(username), 404
+                    # No active check-in found, cannot clock out
+                    return (
+                        "Error: Cannot clock out. No active check-in found for {}.".format(
+                            username
+                        ),
+                        400,  # Bad request (no active check-in)
+                    )
         else:
             return "Employee ID not found for user {}.".format(username), 404
     else:
