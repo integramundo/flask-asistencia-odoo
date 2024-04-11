@@ -5,10 +5,11 @@ from odoo_get_attendance import get_attendance
 # Hypothetical dictionary mapping usernames to real names
 user_map = {
     "User 1": "Cristopher Ferrada",
-    "User 2": "Ariela Ferrada",
-    "User 3": "Nicolás Hernández",
+    "User 2": "Ariela Ferrada Calbún",
+    "User 3": "Nicolás Hernández Díaz",
     "User 4": "Larissa Farfán",
     "User 5": "Lissette Navarrete",
+    "User 6": "Alejandra Paillas",
     # Add more mappings here as needed
 }
 
