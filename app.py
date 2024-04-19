@@ -2,7 +2,7 @@ from flask import Flask, request
 from odoo_post_attendance import post_attendance
 from odoo_get_attendance import get_attendance
 
-# Hypothetical dictionary mapping usernames to real names
+# Dictionary mapping usernames to real names
 user_map = {
     "User 1": "Cristopher Ferrada",
     "User 2": "Ariela Ferrada Calbún",
@@ -10,9 +10,10 @@ user_map = {
     "User 4": "Larissa Farfán",
     "User 5": "Lissette Navarrete",
     "User 6": "Alejandra Paillas",
-    "User 7": "Aylin Toledo",
-    "User 8": "Carolina Díaz",
-    "User 9": "Leonardo Ferrada Vilches",
+    "User 7": "Carolina Díaz",
+    "User 8": "Leonardo Ferrada Vilches",
+    "User 9": "German Tapia",
+    "User 10": "Rodrigo Bicirra",
     # Add more mappings here as needed
 }
 
