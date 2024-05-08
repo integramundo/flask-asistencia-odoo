@@ -13,7 +13,7 @@ user_map = {
     "User 7": "Carolina Díaz",
     "User 8": "Leonardo Ferrada Vilches",
     "User 9": "German Tapia",
-    "User 10": "Rodrigo Bicirra",
+    "User 10": "Francisca Urrutia",
     # Add more mappings here as needed
 }
 
