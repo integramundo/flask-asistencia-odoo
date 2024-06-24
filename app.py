@@ -2,18 +2,22 @@ from flask import Flask, request, jsonify
 from odoo_post_attendance import post_attendance
 from odoo_get_attendance import get_attendance
 import os
-import json
 
-# Assuming the users.json file is in the same directory as your main application file
-user_mapping_path = os.path.join(os.path.dirname(__file__), "users.json")
+# Assuming the users.txt file is in the same directory as your main application file
+user_mapping_path = os.path.join(os.path.dirname(__file__), "users.txt")
 
 # Check if the file exists at the defined path
 if not os.path.isfile(user_mapping_path):
     raise ValueError(f"User mapping file not found at {user_mapping_path}")
 
 # Load the username mapping data from the file
+user_map = {}
 with open(user_mapping_path) as f:
-    user_map = json.load(f)
+    for line in f:
+        line = line.strip()
+        if line:
+            username, real_name = line.split("=", 1)
+            user_map[username.strip()] = real_name.strip()
 
 app = Flask(__name__)
 
@@ -34,7 +38,6 @@ def get_attendance_route():
     else:
         verbose = False
 
-    # Map username
     # Map username to real name if it exists
     real_name = user_map.get(username)
     if not real_name:
