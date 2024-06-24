@@ -15,7 +15,6 @@ if not os.path.isfile(user_mapping_path):
 with open(user_mapping_path) as f:
     user_map = json.load(f)
 
-
 app = Flask(__name__)
 
 
@@ -50,7 +49,19 @@ def handle_attendance():
     try:
         data = request.get_json()
     except Exception as e:
-        return jsonify({"message": f"Error parsing JSON data: {e}", "status_code": 400})
+        return (
+            jsonify({"message": f"Error parsing JSON data: {e}", "status_code": 400}),
+            400,
+        )
+
+    # Ensure required fields are present
+    required_fields = ["file_path", "action", "username"]
+    for field in required_fields:
+        if field not in data:
+            return (
+                jsonify({"message": f"Missing field: {field}", "status_code": 400}),
+                400,
+            )
 
     # Extract relevant information from the JSON
     file_path = data.get("file_path")
@@ -58,24 +69,27 @@ def handle_attendance():
     username = data.get("username")
     verbose = data.get("verbose", False)  # Default verbose to False
 
-    # Validate data (optional)
-    # You can add checks here to ensure the data is valid (e.g., not empty)
-
     # Map username to real name if it exists
     real_name = user_map.get(username)
     if not real_name:
-        return jsonify(
-            {
-                "message": f"Error: Username '{username}' not found in mapping.",
-                "status_code": 404,
-            }
+        return (
+            jsonify(
+                {
+                    "message": f"Error: Username '{username}' not found in mapping.",
+                    "status_code": 404,
+                }
+            ),
+            404,
         )
 
     # Process attendance data
     result = post_attendance(file_path, action, real_name, verbose)
 
-    # Return the JSON response
-    return result
+    # Ensure the response from post_attendance is a dictionary
+    if isinstance(result, dict):
+        return jsonify(result), result.get("status_code", 200)
+    else:
+        return jsonify({"message": "Unexpected error.", "status_code": 500}), 500
 
 
 if __name__ == "__main__":
