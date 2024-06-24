@@ -2,6 +2,7 @@ import xmlrpc.client
 import re
 import sys
 from datetime import datetime, timezone
+from flask import Flask, request, jsonify
 
 
 # Function to read Odoo information from a file
@@ -40,7 +41,7 @@ def post_attendance(file_path, action, username, verbose):
     try:
         url, db, db_username, password = read_odoo_info(file_path, verbose)
     except FileNotFoundError:
-        return "File not found:", 404
+        return jsonify({"message": "File not found.", "status_code": 404})
 
     common = xmlrpc.client.ServerProxy("{}/xmlrpc/2/common".format(url))
     uid = common.authenticate(db, db_username, password, {})
@@ -72,11 +73,13 @@ def post_attendance(file_path, action, username, verbose):
                 )
                 if attendance_id:
                     # Employee already has an active check-in session
-                    return (
-                        "Error: Cannot clock in. {} already has an active check-in session.".format(
-                            username
-                        ),
-                        400,  # Bad request (already clocked in)
+                    return jsonify(
+                        {
+                            "message": "Error: Cannot clock in. {} already has an active check-in session.".format(
+                                username
+                            ),
+                            "status_code": 400,
+                        }
                     )
                 else:
                     # No active check-in found, proceed with clock-in
@@ -95,7 +98,9 @@ def post_attendance(file_path, action, username, verbose):
                             }
                         ],
                     )
-                    return "Check-in successful."
+                    return jsonify(
+                        {"message": "Check-in successful.", "status_code": 200}
+                    )
 
             elif action == "check-out":
                 # Check for existing attendance record with no check-out
@@ -124,16 +129,25 @@ def post_attendance(file_path, action, username, verbose):
                             },
                         ],
                     )
-                    return "Check-out successful."
+                    return jsonify(
+                        {"message": "Check-out successful.", "status_code": 200}
+                    )
                 else:
                     # No active check-in found, cannot clock out
-                    return (
-                        "Error: Cannot clock out. No active check-in found for {}.".format(
-                            username
-                        ),
-                        400,  # Bad request (no active check-in)
+                    return jsonify(
+                        {
+                            "message": "Error: Cannot clock out. No active check-in found for {}.".format(
+                                username
+                            ),
+                            "status_code": 400,
+                        }
                     )
         else:
-            return "Employee ID not found for user {}.".format(username), 404
+            return jsonify(
+                {
+                    "message": "Employee ID not found for user {}.".format(username),
+                    "status_code": 404,
+                }
+            )
     else:
-        return "Authentication failed.", 401
+        return jsonify({"message": "Authentication failed.", "status_code": 401})
