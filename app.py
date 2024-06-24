@@ -1,21 +1,18 @@
+import os
 from flask import Flask, request
 from odoo_post_attendance import post_attendance
 from odoo_get_attendance import get_attendance
 
-# Dictionary mapping usernames to real names
-user_map = {
-    "User 1": "Cristopher Ferrada",
-    "User 2": "Ariela Ferrada Calbún",
-    "User 3": "Nicolás Hernández Díaz",
-    "User 4": "Larissa Farfán",
-    "User 5": "Lissette Navarrete",
-    "User 6": "Alejandra Paillas",
-    "User 7": "Carolina Díaz",
-    "User 8": "Leonardo Ferrada Vilches",
-    "User 9": "German Tapia",
-    "User 10": "Francisca Urrutia",
-    # Add more mappings here as needed
-}
+# Load username mapping from Render environment variable
+user_mapping_file = os.environ.get("users.json")
+
+if not user_mapping_file:
+    raise ValueError("Missing environment variable USER_MAPPING_FILE")
+
+# Assuming the file is a JSON on Render (replace with actual loading logic)
+with open(user_mapping_file) as f:
+    user_map = json.load(f)
+
 
 app = Flask(__name__)
 
