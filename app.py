@@ -34,13 +34,22 @@ def get_attendance_route():
     else:
         verbose = False
 
+    # Map username
     # Map username to real name if it exists
     real_name = user_map.get(username)
     if not real_name:
-        return f"Error: Username '{username}' not found in mapping.", 404
+        return (
+            jsonify(
+                {
+                    "message": f"Error: Username '{username}' not found in mapping.",
+                    "status_code": 404,
+                }
+            ),
+            404,
+        )
 
     result = get_attendance(file_path, real_name, verbose)
-    return result
+    return jsonify(result)
 
 
 @app.route("/post_attendance", methods=["POST"])
@@ -83,11 +92,11 @@ def handle_attendance():
         )
 
     # Process attendance data
-    result = post_attendance(file_path, action, real_name, verbose)
+    result, status_code = post_attendance(file_path, action, real_name, verbose)
 
     # Ensure the response from post_attendance is a dictionary
     if isinstance(result, dict):
-        return jsonify(result), result.get("status_code", 200)
+        return jsonify(result), status_code
     else:
         return jsonify({"message": "Unexpected error.", "status_code": 500}), 500
 

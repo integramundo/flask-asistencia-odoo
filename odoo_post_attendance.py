@@ -44,26 +44,21 @@ def post_attendance(file_path, action, username, verbose):
     try:
         url, db, db_username, password = read_odoo_info(file_path, verbose)
     except FileNotFoundError:
-        return jsonify({"message": "File not found.", "status_code": 404}), 404
+        return {"message": "File not found.", "status_code": 404}, 404
     except Exception as e:
-        return jsonify({"message": str(e), "status_code": 500}), 500
+        return {"message": str(e), "status_code": 500}, 500
 
     try:
         common = xmlrpc.client.ServerProxy("{}/xmlrpc/2/common".format(url))
         uid = common.authenticate(db, db_username, password, {})
     except Exception as e:
-        return (
-            jsonify(
-                {
-                    "message": "Error during authentication: {}".format(e),
-                    "status_code": 500,
-                }
-            ),
-            500,
-        )
+        return {
+            "message": "Error during authentication: {}".format(e),
+            "status_code": 500,
+        }, 500
 
     if not uid:
-        return jsonify({"message": "Authentication failed.", "status_code": 401}), 401
+        return {"message": "Authentication failed.", "status_code": 401}, 401
 
     try:
         models = xmlrpc.client.ServerProxy("{}/xmlrpc/2/object".format(url))
@@ -79,17 +74,10 @@ def post_attendance(file_path, action, username, verbose):
         )
 
         if not employee_id:
-            return (
-                jsonify(
-                    {
-                        "message": "Employee ID not found for user {}.".format(
-                            username
-                        ),
-                        "status_code": 404,
-                    }
-                ),
-                404,
-            )
+            return {
+                "message": "Employee ID not found for user {}.".format(username),
+                "status_code": 404,
+            }, 404
 
         if action == "check-in":
             # Check for existing active attendance record
@@ -104,17 +92,12 @@ def post_attendance(file_path, action, username, verbose):
             )
             if attendance_id:
                 # Employee already has an active check-in session
-                return (
-                    jsonify(
-                        {
-                            "message": "Error: Cannot clock in. {} already has an active check-in session.".format(
-                                username
-                            ),
-                            "status_code": 400,
-                        }
+                return {
+                    "message": "Error: Cannot clock in. {} already has an active check-in session.".format(
+                        username
                     ),
-                    400,
-                )
+                    "status_code": 400,
+                }, 400
             else:
                 # No active check-in found, proceed with clock-in
                 result = models.execute_kw(
@@ -132,10 +115,7 @@ def post_attendance(file_path, action, username, verbose):
                         }
                     ],
                 )
-                return (
-                    jsonify({"message": "Check-in successful.", "status_code": 200}),
-                    200,
-                )
+                return {"message": "Check-in successful.", "status_code": 200}, 200
 
         elif action == "check-out":
             # Check for existing attendance record with no check-out
@@ -164,33 +144,20 @@ def post_attendance(file_path, action, username, verbose):
                         },
                     ],
                 )
-                return (
-                    jsonify({"message": "Check-out successful.", "status_code": 200}),
-                    200,
-                )
+                return {"message": "Check-out successful.", "status_code": 200}, 200
             else:
                 # No active check-in found, cannot clock out
-                return (
-                    jsonify(
-                        {
-                            "message": "Error: Cannot clock out. No active check-in found for {}.".format(
-                                username
-                            ),
-                            "status_code": 400,
-                        }
+                return {
+                    "message": "Error: Cannot clock out. No active check-in found for {}.".format(
+                        username
                     ),
-                    400,
-                )
+                    "status_code": 400,
+                }, 400
         else:
-            return (
-                jsonify({"message": "Invalid action specified.", "status_code": 400}),
-                400,
-            )
+            return {"message": "Invalid action specified.", "status_code": 400}, 400
 
     except Exception as e:
-        return (
-            jsonify(
-                {"message": "Error during operation: {}".format(e), "status_code": 500}
-            ),
-            500,
-        )
+        return {
+            "message": "Error during operation: {}".format(e),
+            "status_code": 500,
+        }, 500
