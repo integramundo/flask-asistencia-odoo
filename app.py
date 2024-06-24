@@ -1,16 +1,18 @@
-import os
 from flask import Flask, request
 from odoo_post_attendance import post_attendance
 from odoo_get_attendance import get_attendance
+import os
+import json
 
-# Load username mapping from Render environment variable
-user_mapping_file = os.environ.get("users.json")
+# Assuming the users.json file is in the same directory as your main application file
+user_mapping_path = os.path.join(os.path.dirname(__file__), "users.json")
 
-if not user_mapping_file:
-    raise ValueError("Missing environment variable USER_MAPPING_FILE")
+# Check if the file exists at the defined path
+if not os.path.isfile(user_mapping_path):
+    raise ValueError(f"User mapping file not found at {user_mapping_path}")
 
-# Assuming the file is a JSON on Render (replace with actual loading logic)
-with open(user_mapping_file) as f:
+# Load the username mapping data from the file
+with open(user_mapping_path) as f:
     user_map = json.load(f)
 
 
