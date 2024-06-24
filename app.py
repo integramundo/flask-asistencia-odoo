@@ -27,6 +27,11 @@ def hello_name(name):
     return f"Hello {name}\n"
 
 
+@app.route("/user_mapping", methods=["GET"])
+def get_user_mapping():
+    return jsonify(user_map)
+
+
 @app.route("/get_attendance", methods=["GET"])
 def get_attendance_route():
     file_path = request.args.get("file_path")
