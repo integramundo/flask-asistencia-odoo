@@ -44,7 +44,7 @@ def post_attendance(file_path, action, username, verbose):
     try:
         url, db, db_username, password = read_odoo_info(file_path, verbose)
     except FileNotFoundError:
-        return {"message": "File not found.", "status_code": 404}, 404
+        return {"message": "Credentials file not found.", "status_code": 404}, 404
     except Exception as e:
         return {"message": str(e), "status_code": 500}, 500
 
